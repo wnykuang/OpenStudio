@@ -449,6 +449,9 @@ set(${target_name}_src
   CoilSystemIntegratedHeatPumpAirSource.hpp
   CoilSystemIntegratedHeatPumpAirSource_Impl.hpp
   CoilSystemIntegratedHeatPumpAirSource.cpp
+  CoilUserDefined.hpp
+  CoilUserDefined_Impl.hpp
+  CoilUserDefined.cpp
   CoilWaterHeatingAirToWaterHeatPump.hpp
   CoilWaterHeatingAirToWaterHeatPump_Impl.hpp
   CoilWaterHeatingAirToWaterHeatPump.cpp
@@ -902,6 +905,12 @@ set(${target_name}_src
   HeatBalanceAlgorithm.hpp
   HeatBalanceAlgorithm_Impl.hpp
   HeatBalanceAlgorithm.cpp
+  HeatPumpAirToWaterFuelFiredHeating.hpp
+  HeatPumpAirToWaterFuelFiredHeating_Impl.hpp
+  HeatPumpAirToWaterFuelFiredHeating.cpp
+  HeatPumpAirToWaterFuelFiredCooling.hpp
+  HeatPumpAirToWaterFuelFiredCooling_Impl.hpp
+  HeatPumpAirToWaterFuelFiredCooling.cpp
   HeatPumpWaterToWaterEquationFitCooling.hpp
   HeatPumpWaterToWaterEquationFitCooling_Impl.hpp
   HeatPumpWaterToWaterEquationFitCooling.cpp
@@ -1063,6 +1072,9 @@ set(${target_name}_src
   OutputControlTableStyle.hpp
   OutputControlTableStyle_Impl.hpp
   OutputControlTableStyle.cpp
+  OutputControlTimestamp.hpp
+  OutputControlTimestamp_Impl.hpp
+  OutputControlTimestamp.cpp
   OutputDebuggingData.hpp
   OutputDebuggingData_Impl.hpp
   OutputDebuggingData.cpp
@@ -1495,6 +1507,9 @@ set(${target_name}_src
   SolarCollectorPerformanceIntegralCollectorStorage.hpp
   SolarCollectorPerformanceIntegralCollectorStorage_Impl.hpp
   SolarCollectorPerformanceIntegralCollectorStorage.cpp
+  SolarCollectorPerformancePhotovoltaicThermalBIPVT.hpp
+  SolarCollectorPerformancePhotovoltaicThermalBIPVT_Impl.hpp
+  SolarCollectorPerformancePhotovoltaicThermalBIPVT.cpp
   SolarCollectorPerformancePhotovoltaicThermalSimple.hpp
   SolarCollectorPerformancePhotovoltaicThermalSimple_Impl.hpp
   SolarCollectorPerformancePhotovoltaicThermalSimple.cpp
@@ -1975,10 +1990,11 @@ set(${target_name}_test_src
   test/CoilHeatingWaterToAirHeatPumpVariableSpeedEquationFitSpeedData_GTest.cpp
   test/CoilHeatingWaterBaseboard_GTest.cpp
   test/CoilHeatingWaterBaseboardRadiant_GTest.cpp
+  test/CoilPerformanceDXCooling_GTest.cpp
   test/CoilSystemCoolingDXHeatExchangerAssisted_GTest.cpp
   test/CoilSystemCoolingWaterHeatExchangerAssisted_GTest.cpp
   test/CoilSystemIntegratedHeatPumpAirSource_GTest.cpp
-  test/CoilPerformanceDXCooling_GTest.cpp
+  test/CoilUserDefined_GTest.cpp
   test/CoilWaterHeatingAirToWaterHeatPump_GTest.cpp
   test/CoilWaterHeatingAirToWaterHeatPumpVariableSpeed_GTest.cpp
   test/CoilWaterHeatingAirToWaterHeatPumpVariableSpeedSpeedData_GTest.cpp
@@ -2118,6 +2134,8 @@ set(${target_name}_test_src
   test/HeatExchangerDesiccantBalancedFlow_GTest.cpp
   test/HeatExchangerDesiccantBalancedFlowPerformanceDataType1_GTest.cpp
   test/HeatExchangerFluidToFluid_GTest.cpp
+  test/HeatPumpAirToWaterFuelFiredHeating_GTest.cpp
+  test/HeatPumpAirToWaterFuelFiredCooling_GTest.cpp
   test/HeatPumpWaterToWaterEquationFitHeating_GTest.cpp
   test/HeatPumpWaterToWaterEquationFitCooling_GTest.cpp
   test/HeatPumpPlantLoopEIRHeating_GTest.cpp
@@ -2158,6 +2176,7 @@ set(${target_name}_test_src
   test/OutputControlFiles_GTest.cpp
   test/OutputControlReportingTolerances_GTest.cpp
   test/OutputControlTableStyle_GTest.cpp
+  test/OutputControlTimestamp_GTest.cpp
   test/OutputDebuggingData_GTest.cpp
   test/OutputJSON_GTest.cpp
   test/OutputSQLite_GTest.cpp
@@ -2277,6 +2296,7 @@ set(${target_name}_test_src
   test/SolarCollectorFlatPlatePhotovoltaicThermal_GTest.cpp
   test/SolarCollectorFlatPlateWater_GTest.cpp
   test/SolarCollectorIntegralCollectorStorage_GTest.cpp
+  test/SolarCollectorPerformancePhotovoltaicThermalBIPVT_GTest.cpp
   test/SpaceInfiltrationDesignFlowRate_GTest.cpp
   test/SpaceInfiltrationEffectiveLeakageArea_GTest.cpp
   test/SpaceInfiltrationFlowCoefficient_GTest.cpp

@@ -99,6 +99,7 @@ set(${target_name}_src
   ForwardTranslator/ForwardTranslateCoilSystemCoolingDXHeatExchangerAssisted.cpp
   ForwardTranslator/ForwardTranslateCoilSystemCoolingWaterHeatExchangerAssisted.cpp
   ForwardTranslator/ForwardTranslateCoilSystemIntegratedHeatPumpAirSource.cpp
+  ForwardTranslator/ForwardTranslateCoilUserDefined.cpp
   ForwardTranslator/ForwardTranslateCoilWaterHeatingDesuperheater.cpp
   ForwardTranslator/ForwardTranslateCoilWaterHeatingAirToWaterHeatPump.cpp
   ForwardTranslator/ForwardTranslateCoilWaterHeatingAirToWaterHeatPumpVariableSpeed.cpp
@@ -224,6 +225,8 @@ set(${target_name}_src
   ForwardTranslator/ForwardTranslateHeatExchangerDesiccantBalancedFlow.cpp
   ForwardTranslator/ForwardTranslateHeatExchangerDesiccantBalancedFlowPerformanceDataType1.cpp
   ForwardTranslator/ForwardTranslateHeatExchangerFluidToFluid.cpp
+  ForwardTranslator/ForwardTranslateHeatPumpAirToWaterFuelFiredHeating.cpp
+  ForwardTranslator/ForwardTranslateHeatPumpAirToWaterFuelFiredCooling.cpp
   ForwardTranslator/ForwardTranslateHeatPumpWaterToWaterEquationFitCooling.cpp
   ForwardTranslator/ForwardTranslateHeatPumpWaterToWaterEquationFitHeating.cpp
   ForwardTranslator/ForwardTranslateHeatPumpPlantLoopEIRCooling.cpp
@@ -255,6 +258,7 @@ set(${target_name}_src
   ForwardTranslator/ForwardTranslateOutputControlFiles.cpp
   ForwardTranslator/ForwardTranslateOutputControlReportingTolerances.cpp
   ForwardTranslator/ForwardTranslateOutputControlTableStyle.cpp
+  ForwardTranslator/ForwardTranslateOutputControlTimestamp.cpp
   ForwardTranslator/ForwardTranslateOutputMeter.cpp
   ForwardTranslator/ForwardTranslateOutputVariable.cpp
   ForwardTranslator/ForwardTranslateOutputDebuggingData.cpp
@@ -380,6 +384,7 @@ set(${target_name}_src
   ForwardTranslator/ForwardTranslateSolarCollectorIntegralCollectorStorage.cpp
   ForwardTranslator/ForwardTranslateSolarCollectorPerformanceFlatPlate.cpp
   ForwardTranslator/ForwardTranslateSolarCollectorPerformanceIntegralCollectorStorage.cpp
+  ForwardTranslator/ForwardTranslateSolarCollectorPerformancePhotovoltaicThermalBIPVT.cpp
   ForwardTranslator/ForwardTranslateSolarCollectorPerformancePhotovoltaicThermalSimple.cpp
   ForwardTranslator/ForwardTranslateSpaceType.cpp
   ForwardTranslator/ForwardTranslateSpaceInfiltrationDesignFlowRate.cpp
@@ -394,12 +399,12 @@ set(${target_name}_src
   ForwardTranslator/ForwardTranslateSurfacePropertyConvectionCoefficients.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertyConvectionCoefficientsMultipleSurface.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertyExposedFoundationPerimeter.cpp
+  ForwardTranslator/ForwardTranslateSurfacePropertyGroundSurfaces.cpp
+  ForwardTranslator/ForwardTranslateSurfacePropertyIncidentSolarMultiplier.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertyLocalEnvironment.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertyOtherSideCoefficients.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertyOtherSideConditionsModel.cpp
   ForwardTranslator/ForwardTranslateSurfacePropertySurroundingSurfaces.cpp
-  ForwardTranslator/ForwardTranslateSurfacePropertyGroundSurfaces.cpp
-  ForwardTranslator/ForwardTranslateSurfacePropertyIncidentSolarMultiplier.cpp
   ForwardTranslator/ForwardTranslateSwimmingPoolIndoor.cpp
   ForwardTranslator/ForwardTranslateTableMultiVariableLookup.cpp
   ForwardTranslator/ForwardTranslateTableLookup.cpp
@@ -545,6 +550,7 @@ set(${target_name}_src
   ReverseTranslator/ReverseTranslateOutputControlFiles.cpp
   ReverseTranslator/ReverseTranslateOutputControlReportingTolerances.cpp
   ReverseTranslator/ReverseTranslateOutputControlTableStyle.cpp
+  ReverseTranslator/ReverseTranslateOutputControlTimestamp.cpp
   ReverseTranslator/ReverseTranslateOutputDebuggingData.cpp
   ReverseTranslator/ReverseTranslateOutputDiagnostics.cpp
   ReverseTranslator/ReverseTranslateOutputEnergyManagementSystem.cpp
@@ -596,15 +602,17 @@ set(${target_name}_src
   ReverseTranslator/ReverseTranslateSizingSystem.cpp
   ReverseTranslator/ReverseTranslateSizingZone.cpp
   ReverseTranslator/ReverseTranslateSizingPeriodDesignDay.cpp
+  ReverseTranslator/ReverseTranslateSolarCollectorPerformancePhotovoltaicThermalBIPVT.cpp
   ReverseTranslator/ReverseTranslateSteamEquipment.cpp
   ReverseTranslator/ReverseTranslateSurfaceControlMovableInsulation.cpp
   ReverseTranslator/ReverseTranslateSurfaceConvectionAlgorithmInside.cpp
   ReverseTranslator/ReverseTranslateSurfaceConvectionAlgorithmOutside.cpp
   ReverseTranslator/ReverseTranslateSurfacePropertyExposedFoundationPerimeter.cpp
-  ReverseTranslator/ReverseTranslateSurfacePropertyLocalEnvironment.cpp
-  ReverseTranslator/ReverseTranslateSurfacePropertySurroundingSurfaces.cpp
   ReverseTranslator/ReverseTranslateSurfacePropertyGroundSurfaces.cpp
   ReverseTranslator/ReverseTranslateSurfacePropertyIncidentSolarMultiplier.cpp
+  ReverseTranslator/ReverseTranslateSurfacePropertyLocalEnvironment.cpp
+  ReverseTranslator/ReverseTranslateSurfacePropertyOtherSideConditionsModel.cpp
+  ReverseTranslator/ReverseTranslateSurfacePropertySurroundingSurfaces.cpp
   ReverseTranslator/ReverseTranslateSwimmingPoolIndoor.cpp
   ReverseTranslator/ReverseTranslateTableLookup.cpp
   ReverseTranslator/ReverseTranslateTableIndependentVariable.cpp
@@ -691,6 +699,7 @@ set(${target_name}_test_src
   Test/CoilHeatingGas_GTest.cpp
   Test/CoilHeatingGasMultiStage_GTest.cpp
   Test/CoilSystemIntegratedHeatPumpAirSource_GTest.cpp
+  Test/CoilUserDefined_GTest.cpp
   Test/CoilWaterHeatingAirToWaterHeatPumpVariableSpeed_GTest.cpp
   Test/CoilWaterHeatingDesuperheater_GTest.cpp
   Test/Construction_GTest.cpp
@@ -728,6 +737,7 @@ set(${target_name}_test_src
   Test/GroundHeatExchangerHorizontalTrench_GTest.cpp
   Test/HeatExchangerDesiccantBalancedFlow_GTest.cpp
   Test/HeatExchangerDesiccantBalancedFlowPerformanceDataType1_GTest.cpp
+  Test/HeatPumpAirToWaterFuelFired_GTest.cpp
   Test/HeatPumpWaterToWaterEquationFit_GTest.cpp
   Test/HeatPumpPlantLoopEIR_GTest.cpp
   Test/HotWaterEquipment_GTest.cpp
@@ -745,6 +755,7 @@ set(${target_name}_test_src
   Test/OutputControlFiles_GTest.cpp
   Test/OutputControlReportingTolerances_GTest.cpp
   Test/OutputControlTableStyle_GTest.cpp
+  Test/OutputControlTimestamp_GTest.cpp
   Test/OutputDebuggingData_GTest.cpp
   Test/OutputDiagnostics_GTest.cpp
   Test/OutputJSON_GTest.cpp
@@ -778,6 +789,7 @@ set(${target_name}_test_src
   Test/SiteGroundTemperatureUndisturbedXing_GTest.cpp
   Test/SizingSystem_GTest.cpp
   Test/SizingZone_GTest.cpp
+  Test/SolarCollectorPerformancePhotovoltaicThermalBIPVT_GTest.cpp
   Test/Space_GTest.cpp
   Test/SpaceInfiltrationDesignFlowRate_GTest.cpp
   Test/SpaceInfiltrationEffectiveLeakageArea_GTest.cpp
@@ -787,10 +799,11 @@ set(${target_name}_test_src
   Test/Surface_GTest.cpp
   Test/SurfaceControlMovableInsulation_GTest.cpp
   Test/SurfacePropertyConvectionCoefficients_GTest.cpp
-  Test/SurfacePropertyLocalEnvironment_GTest.cpp
-  Test/SurfacePropertySurroundingSurfaces_GTest.cpp
   Test/SurfacePropertyGroundSurfaces_GTest.cpp
   Test/SurfacePropertyIncidentSolarMultiplier_GTest.cpp
+  Test/SurfacePropertyLocalEnvironment_GTest.cpp
+  Test/SurfacePropertyOtherSideConditionsModel_GTest.cpp
+  Test/SurfacePropertySurroundingSurfaces_GTest.cpp
   Test/SwimmingPoolIndoor_GTest.cpp
   Test/TableMultiVariableLookup_GTest.cpp
   Test/TableLookup_GTest.cpp

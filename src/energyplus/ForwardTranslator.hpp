@@ -159,6 +159,7 @@ namespace model {
   class CoilSystemCoolingDXHeatExchangerAssisted;
   class CoilSystemCoolingWaterHeatExchangerAssisted;
   class CoilSystemIntegratedHeatPumpAirSource;
+  class CoilUserDefined;
   class CoilWaterHeatingDesuperheater;
   class CoilWaterHeatingAirToWaterHeatPump;
   class CoilWaterHeatingAirToWaterHeatPumpVariableSpeed;
@@ -284,6 +285,8 @@ namespace model {
   class HeatExchangerDesiccantBalancedFlow;
   class HeatExchangerDesiccantBalancedFlowPerformanceDataType1;
   class HeatExchangerFluidToFluid;
+  class HeatPumpAirToWaterFuelFiredHeating;
+  class HeatPumpAirToWaterFuelFiredCooling;
   class HeatPumpWaterToWaterEquationFitCooling;
   class HeatPumpWaterToWaterEquationFitHeating;
   class HeatPumpPlantLoopEIRCooling;
@@ -315,6 +318,7 @@ namespace model {
   class OutputControlFiles;
   class OutputControlReportingTolerances;
   class OutputControlTableStyle;
+  class OutputControlTimestamp;
   class OutputDebuggingData;
   class OutputDiagnostics;
   class OutputJSON;
@@ -441,6 +445,7 @@ namespace model {
   class SolarCollectorIntegralCollectorStorage;
   class SolarCollectorPerformanceFlatPlate;
   class SolarCollectorPerformanceIntegralCollectorStorage;
+  class SolarCollectorPerformancePhotovoltaicThermalBIPVT;
   class SolarCollectorPerformancePhotovoltaicThermalSimple;
   class Space;
   class SpaceInfiltrationDesignFlowRate;
@@ -855,6 +860,8 @@ namespace energyplus {
 
     boost::optional<IdfObject> translateCoilSystemIntegratedHeatPumpAirSource(model::CoilSystemIntegratedHeatPumpAirSource& modelObject);
 
+    boost::optional<IdfObject> translateCoilUserDefined(model::CoilUserDefined& modelObject);
+
     boost::optional<IdfObject> translateCoilWaterHeatingDesuperheater(model::CoilWaterHeatingDesuperheater& modelObject);
 
     boost::optional<IdfObject> translateCoilWaterHeatingAirToWaterHeatPump(model::CoilWaterHeatingAirToWaterHeatPump& modelObject);
@@ -1109,6 +1116,10 @@ namespace energyplus {
 
     boost::optional<IdfObject> translateHeatExchangerFluidToFluid(model::HeatExchangerFluidToFluid& modelObject);
 
+    boost::optional<IdfObject> translateHeatPumpAirToWaterFuelFiredHeating(model::HeatPumpAirToWaterFuelFiredHeating& modelObject);
+
+    boost::optional<IdfObject> translateHeatPumpAirToWaterFuelFiredCooling(model::HeatPumpAirToWaterFuelFiredCooling& modelObject);
+
     boost::optional<IdfObject> translateHeatPumpWaterToWaterEquationFitCooling(model::HeatPumpWaterToWaterEquationFitCooling& modelObject);
 
     boost::optional<IdfObject> translateHeatPumpWaterToWaterEquationFitHeating(model::HeatPumpWaterToWaterEquationFitHeating& modelObject);
@@ -1171,6 +1182,8 @@ namespace energyplus {
     boost::optional<IdfObject> translateOutputControlReportingTolerances(model::OutputControlReportingTolerances& modelObject);
 
     boost::optional<IdfObject> translateOutputControlTableStyle(model::OutputControlTableStyle& modelObject);
+
+    boost::optional<IdfObject> translateOutputControlTimestamp(model::OutputControlTimestamp& modelObject);
 
     boost::optional<IdfObject> translateOutputDebuggingData(model::OutputDebuggingData& modelObject);
 
@@ -1429,6 +1442,9 @@ namespace energyplus {
       translateSolarCollectorPerformanceIntegralCollectorStorage(model::SolarCollectorPerformanceIntegralCollectorStorage& modelObject);
 
     boost::optional<IdfObject>
+      translateSolarCollectorPerformancePhotovoltaicThermalBIPVT(model::SolarCollectorPerformancePhotovoltaicThermalBIPVT& modelObject);
+
+    boost::optional<IdfObject>
       translateSolarCollectorPerformancePhotovoltaicThermalSimple(model::SolarCollectorPerformancePhotovoltaicThermalSimple& modelObject);
 
     boost::optional<IdfObject> translateSpace(model::Space& modelObject);
@@ -1599,14 +1615,6 @@ namespace energyplus {
 
     // translate all airflow network objects if an AFN simulation control exists
     void translateAirflowNetwork(const model::Model& model);
-
-    // returns the always on schedule if found, otherwise creates one and saves for later
-    IdfObject alwaysOnSchedule();
-    boost::optional<IdfObject> m_alwaysOnSchedule;
-
-    // returns the always off schedule if found, otherwise creates one and saves for later
-    IdfObject alwaysOffSchedule();
-    boost::optional<IdfObject> m_alwaysOffSchedule;
 
     // returns the default interior partition surface construction, otherwise creates one and saves for later
     model::ConstructionBase interiorPartitionSurfaceConstruction(model::Model& model);

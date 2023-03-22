@@ -301,6 +301,22 @@ namespace model {
       return m_cachedOutputControlTableStyle;
     }
 
+    boost::optional<OutputControlTimestamp> Model_Impl::outputControlTimestamp() const {
+      if (m_cachedOutputControlTimestamp) {
+        return m_cachedOutputControlTimestamp;
+      }
+
+      boost::optional<OutputControlTimestamp> result = this->model().getOptionalUniqueModelObject<OutputControlTimestamp>();
+      if (result) {
+        m_cachedOutputControlTimestamp = result;
+        result->getImpl<OutputControlTimestamp_Impl>()
+          ->OutputControlTimestamp_Impl::onRemoveFromWorkspace.connect<Model_Impl, &Model_Impl::clearCachedOutputControlTimestamp>(
+            const_cast<openstudio::model::detail::Model_Impl*>(this));
+      }
+
+      return m_cachedOutputControlTimestamp;
+    }
+
     boost::optional<OutputDiagnostics> Model_Impl::outputDiagnostics() const {
       if (m_cachedOutputDiagnostics) {
         return m_cachedOutputDiagnostics;
@@ -1508,6 +1524,7 @@ namespace model {
       clearCachedOutputControlFiles(dummy);
       clearCachedOutputControlReportingTolerances(dummy);
       clearCachedOutputControlTableStyle(dummy);
+      clearCachedOutputControlTimestamp(dummy);
       clearCachedOutputDiagnostics(dummy);
       clearCachedOutputDebuggingData(dummy);
       clearCachedOutputJSON(dummy);
@@ -1568,6 +1585,10 @@ namespace model {
 
     void Model_Impl::clearCachedOutputControlTableStyle(const Handle&) {
       m_cachedOutputControlTableStyle.reset();
+    }
+
+    void Model_Impl::clearCachedOutputControlTimestamp(const Handle&) {
+      m_cachedOutputControlTimestamp.reset();
     }
 
     void Model_Impl::clearCachedOutputDiagnostics(const Handle&) {
@@ -1899,6 +1920,10 @@ namespace model {
 
   boost::optional<OutputControlTableStyle> Model::outputControlTableStyle() const {
     return getImpl<detail::Model_Impl>()->outputControlTableStyle();
+  }
+
+  boost::optional<OutputControlTimestamp> Model::outputControlTimestamp() const {
+    return getImpl<detail::Model_Impl>()->outputControlTimestamp();
   }
 
   boost::optional<OutputDiagnostics> Model::outputDiagnostics() const {
@@ -3437,6 +3462,15 @@ namespace model {
   }
 
   template <>
+  OutputControlTimestamp Model::getUniqueModelObject<OutputControlTimestamp>() {
+    if (boost::optional<OutputControlTimestamp> _b = outputControlTimestamp()) {
+      return _b.get();
+    } else {
+      return OutputControlTimestamp(*this);
+    }
+  }
+
+  template <>
   OutputDiagnostics Model::getUniqueModelObject<OutputDiagnostics>() {
     if (boost::optional<OutputDiagnostics> _b = outputDiagnostics()) {
       return _b.get();
@@ -3956,6 +3990,7 @@ namespace model {
     REGISTER_CONSTRUCTOR(CoilSystemCoolingWaterHeatExchangerAssisted);
     REGISTER_CONSTRUCTOR(CoilSystemCoolingDXHeatExchangerAssisted);
     REGISTER_CONSTRUCTOR(CoilSystemIntegratedHeatPumpAirSource);
+    REGISTER_CONSTRUCTOR(CoilUserDefined);
     REGISTER_CONSTRUCTOR(CoilWaterHeatingAirToWaterHeatPump);
     REGISTER_CONSTRUCTOR(CoilWaterHeatingAirToWaterHeatPumpVariableSpeed);
     REGISTER_CONSTRUCTOR(CoilWaterHeatingAirToWaterHeatPumpVariableSpeedSpeedData);
@@ -4102,6 +4137,8 @@ namespace model {
     REGISTER_CONSTRUCTOR(HeatExchangerDesiccantBalancedFlow);
     REGISTER_CONSTRUCTOR(HeatExchangerDesiccantBalancedFlowPerformanceDataType1);
     REGISTER_CONSTRUCTOR(HeatExchangerFluidToFluid);
+    REGISTER_CONSTRUCTOR(HeatPumpAirToWaterFuelFiredHeating);
+    REGISTER_CONSTRUCTOR(HeatPumpAirToWaterFuelFiredCooling);
     REGISTER_CONSTRUCTOR(HeatPumpWaterToWaterEquationFitCooling);
     REGISTER_CONSTRUCTOR(HeatPumpWaterToWaterEquationFitHeating);
     REGISTER_CONSTRUCTOR(HeatPumpPlantLoopEIRCooling);
@@ -4143,6 +4180,7 @@ namespace model {
     REGISTER_CONSTRUCTOR(OutputControlFiles);
     REGISTER_CONSTRUCTOR(OutputControlReportingTolerances);
     REGISTER_CONSTRUCTOR(OutputControlTableStyle);
+    REGISTER_CONSTRUCTOR(OutputControlTimestamp);
     REGISTER_CONSTRUCTOR(OutputDebuggingData);
     REGISTER_CONSTRUCTOR(OutputDiagnostics);
     REGISTER_CONSTRUCTOR(OutputEnergyManagementSystem);
@@ -4274,6 +4312,7 @@ namespace model {
     REGISTER_CONSTRUCTOR(SolarCollectorIntegralCollectorStorage);
     REGISTER_CONSTRUCTOR(SolarCollectorPerformanceFlatPlate);
     REGISTER_CONSTRUCTOR(SolarCollectorPerformanceIntegralCollectorStorage);
+    REGISTER_CONSTRUCTOR(SolarCollectorPerformancePhotovoltaicThermalBIPVT);
     REGISTER_CONSTRUCTOR(SolarCollectorPerformancePhotovoltaicThermalSimple);
     REGISTER_CONSTRUCTOR(Space);
     REGISTER_CONSTRUCTOR(SpaceInfiltrationDesignFlowRate);
@@ -4522,6 +4561,7 @@ namespace model {
     REGISTER_COPYCONSTRUCTORS(CoilSystemCoolingWaterHeatExchangerAssisted);
     REGISTER_COPYCONSTRUCTORS(CoilSystemCoolingDXHeatExchangerAssisted);
     REGISTER_COPYCONSTRUCTORS(CoilSystemIntegratedHeatPumpAirSource);
+    REGISTER_COPYCONSTRUCTORS(CoilUserDefined);
     REGISTER_COPYCONSTRUCTORS(CoilWaterHeatingAirToWaterHeatPump);
     REGISTER_COPYCONSTRUCTORS(CoilWaterHeatingAirToWaterHeatPumpVariableSpeed);
     REGISTER_COPYCONSTRUCTORS(CoilWaterHeatingAirToWaterHeatPumpVariableSpeedSpeedData);
@@ -4668,6 +4708,8 @@ namespace model {
     REGISTER_COPYCONSTRUCTORS(HeatExchangerDesiccantBalancedFlow);
     REGISTER_COPYCONSTRUCTORS(HeatExchangerDesiccantBalancedFlowPerformanceDataType1);
     REGISTER_COPYCONSTRUCTORS(HeatExchangerFluidToFluid);
+    REGISTER_COPYCONSTRUCTORS(HeatPumpAirToWaterFuelFiredHeating);
+    REGISTER_COPYCONSTRUCTORS(HeatPumpAirToWaterFuelFiredCooling);
     REGISTER_COPYCONSTRUCTORS(HeatPumpWaterToWaterEquationFitCooling);
     REGISTER_COPYCONSTRUCTORS(HeatPumpWaterToWaterEquationFitHeating);
     REGISTER_COPYCONSTRUCTORS(HeatPumpPlantLoopEIRCooling);
@@ -4709,6 +4751,7 @@ namespace model {
     REGISTER_COPYCONSTRUCTORS(OutputControlFiles);
     REGISTER_COPYCONSTRUCTORS(OutputControlReportingTolerances);
     REGISTER_COPYCONSTRUCTORS(OutputControlTableStyle);
+    REGISTER_COPYCONSTRUCTORS(OutputControlTimestamp);
     REGISTER_COPYCONSTRUCTORS(OutputDebuggingData);
     REGISTER_COPYCONSTRUCTORS(OutputDiagnostics);
     REGISTER_COPYCONSTRUCTORS(OutputEnergyManagementSystem);
@@ -4840,6 +4883,7 @@ namespace model {
     REGISTER_COPYCONSTRUCTORS(SolarCollectorIntegralCollectorStorage);
     REGISTER_COPYCONSTRUCTORS(SolarCollectorPerformanceFlatPlate);
     REGISTER_COPYCONSTRUCTORS(SolarCollectorPerformanceIntegralCollectorStorage);
+    REGISTER_COPYCONSTRUCTORS(SolarCollectorPerformancePhotovoltaicThermalBIPVT);
     REGISTER_COPYCONSTRUCTORS(SolarCollectorPerformancePhotovoltaicThermalSimple);
     REGISTER_COPYCONSTRUCTORS(Space);
     REGISTER_COPYCONSTRUCTORS(SpaceInfiltrationDesignFlowRate);

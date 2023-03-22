@@ -114,6 +114,14 @@ if(BUILD_TESTING)
     COMMAND $<TARGET_FILE:openstudio> labs -e "puts(OpenStudio::Model::Model.new())"
   )
 
+  add_test(NAME OpenStudioCLI.ruby_execute_line_no_chop_single_quote
+    COMMAND $<TARGET_FILE:openstudio> -e "puts 'hello world'"
+  )
+
+  add_test(NAME OpenStudioCLI.Labs.ruby_execute_line_no_chop_single_quote
+    COMMAND $<TARGET_FILE:openstudio> labs -e "puts 'hello world'"
+  )
+
   add_test(NAME OpenStudioCLI.Labs.ruby_execute_line.embedded_gem
     COMMAND $<TARGET_FILE:openstudio> labs -e "require 'minitest'"
   )
@@ -129,16 +137,80 @@ if(BUILD_TESTING)
   add_test(NAME OpenStudioCLI.Labs.execute_ruby_script
     COMMAND $<TARGET_FILE:openstudio> labs execute_ruby_script ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_ruby_script_with_arguments_test.rb OpenStudioLabs "National Renewable Energy Laboratory"
   )
+  set_tests_properties(OpenStudioCLI.Labs.execute_ruby_script PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from OpenStudioLabs, at National Renewable Energy Laboratory"
+  )
+
+  # Ensure we don't get these
+  # > eval:1: warning: already initialized constant OpenStudio::Airflow::AirflowElement::DR_DOOR
+  # > eval:1: warning: previous definition of DR_DOOR was here
+  add_test(NAME OpenStudioCLI.Labs.execute_ruby_script.no_previous_definition
+    COMMAND $<TARGET_FILE:openstudio> labs execute_ruby_script ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_ruby_script_with_arguments_test.rb OpenStudioLabs "National Renewable Energy Laboratory"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.execute_ruby_script.no_previous_definition PROPERTIES
+    FAIL_REGULAR_EXPRESSION "previous definition of;already initialized constant"
+  )
+
+  add_test(NAME OpenStudioCLI.Labs.execute_ruby_script.forward_flags
+    COMMAND $<TARGET_FILE:openstudio> labs execute_ruby_script ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_ruby_script_with_arguments_test.rb -x "National Renewable Energy Laboratory"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.execute_ruby_script.forward_flags PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from -x, at National Renewable Energy Laboratory"
+  )
+
+  add_test(NAME OpenStudioCLI.Labs.execute_ruby_script.forward_flags.omit_execute
+    COMMAND $<TARGET_FILE:openstudio> labs ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_ruby_script_with_arguments_test.rb -x "National Renewable Energy Laboratory"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.execute_ruby_script.forward_flags PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from -x, at National Renewable Energy Laboratory"
+  )
 
   add_test(NAME OpenStudioCLI.Labs.execute_python_script
     COMMAND $<TARGET_FILE:openstudio> labs execute_python_script ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_python_script_with_arguments_test.py OpenStudioLabs "National Renewable Energy Laboratory"
   )
+  set_tests_properties(OpenStudioCLI.Labs.execute_python_script PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from OpenStudioLabs, at National Renewable Energy Laboratory"
+  )
+
+  add_test(NAME OpenStudioCLI.Labs.execute_python_script.forward_flags
+    COMMAND $<TARGET_FILE:openstudio> labs execute_python_script ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_python_script_with_arguments_test.py -x "National Renewable Energy Laboratory"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.execute_python_script.forward_flags PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from -x, at National Renewable Energy Laboratory"
+  )
+
+  add_test(NAME OpenStudioCLI.Labs.execute_python_script.forward_flags.omit_execute
+    COMMAND $<TARGET_FILE:openstudio> labs ${CMAKE_CURRENT_SOURCE_DIR}/test/execute_python_script_with_arguments_test.py -x "National Renewable Energy Laboratory"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.execute_python_script.forward_flags PROPERTIES
+    PASS_REGULAR_EXPRESSION "Hello from -x, at National Renewable Energy Laboratory"
+  )
+
+  add_test(NAME OpenStudioCLI.Run_RubyOnly
+    COMMAND $<TARGET_FILE:openstudio> run -w compact_ruby_only.osw
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/"
+  )
+  set_tests_properties(OpenStudioCLI.Run_RubyOnly PROPERTIES RESOURCE_LOCK "compact_osw")
 
   add_test(NAME OpenStudioCLI.Labs.Run_RubyOnly
     COMMAND $<TARGET_FILE:openstudio> labs run -w compact_ruby_only.osw
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/"
   )
   set_tests_properties(OpenStudioCLI.Labs.Run_RubyOnly PROPERTIES RESOURCE_LOCK "compact_osw")
+
+
+  add_test(NAME OpenStudioCLI.Run_RubyOnly.absolute_path
+    COMMAND $<TARGET_FILE:openstudio> run -w "'${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/compact_ruby_only.osw'"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/"
+  )
+  set_tests_properties(OpenStudioCLI.Run_RubyOnly.absolute_path PROPERTIES RESOURCE_LOCK "compact_osw")
+
+  add_test(NAME OpenStudioCLI.Labs.Run_RubyOnly.absolute_path
+    COMMAND $<TARGET_FILE:openstudio> labs run -w "'${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/compact_ruby_only.osw'"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/resources/Examples/compact_osw/"
+  )
+  set_tests_properties(OpenStudioCLI.Labs.Run_RubyOnly.absolute_path PROPERTIES RESOURCE_LOCK "compact_osw")
+
 
   add_test(NAME OpenStudioCLI.Labs.Run_PythonOnly
     COMMAND $<TARGET_FILE:openstudio> labs run -w compact_python_only.osw

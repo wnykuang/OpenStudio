@@ -194,11 +194,11 @@ set(ENERGYPLUS_VERSION_MINOR 1)
 set(ENERGYPLUS_VERSION_PATCH 0)
 set(ENERGYPLUS_VERSION "${ENERGYPLUS_VERSION_MAJOR}.${ENERGYPLUS_VERSION_MINOR}.${ENERGYPLUS_VERSION_PATCH}")
 # Build SHA is not required to have a value, but if it does OpenStudio will require this build.
-set(ENERGYPLUS_BUILD_SHA "ff86a13c18")
+set(ENERGYPLUS_BUILD_SHA "0bd0387556")
 
 # ENERGYPLUS_RELEASE_NAME is used to locate the E+ download
 # from the github releases
-set(ENERGYPLUS_RELEASE_NAME "v23.1.0-IOFreeze")
+set(ENERGYPLUS_RELEASE_NAME "v23.1.0-RC1")
 
 set(ENERGYPLUS_REPO "NREL")
 
@@ -248,6 +248,15 @@ elseif(UNIX)
     OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+
+  find_program(UNAME uname)
+  execute_process(COMMAND ${UNAME} -m
+    OUTPUT_VARIABLE ARCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if (ARCH STREQUAL "aarch64")
+    set(ARCH "arm64")
+  endif()
 
   # eg: `-Ubuntu18.04`
   set(ENERGYPLUS_SYSTEM_VERSION "-${LSB_RELEASE_ID_SHORT}${LSB_RELEASE_VERSION_SHORT}")
@@ -494,7 +503,9 @@ if(UNIX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fPIC -fno-strict-aliasing")
 
   # all warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -fno-strict-aliasing -Winvalid-pch -Wnon-virtual-dtor")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -fno-strict-aliasing -Winvalid-pch -Wnon-virtual-dtor -Wno-narrowing")
+  # TODO: temp for gcc-11 which throws narrowing conversions in Path_GTest.cpp due to int codepoints
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
   # Treat all warnings as errors
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
   if(APPLE)
@@ -580,6 +591,8 @@ if(MSVC)
   add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
   add_definitions(-D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING)
 
+  add_compile_options(/utf-8)
+
 endif()
 
 ##############################################################################
@@ -597,29 +610,34 @@ endif()
 # Dependencies
 
 
-
 # EnergyPlus
 
 if(UNIX)
   if(APPLE)
     if (ARCH MATCHES "arm64")
-      set(ENERGYPLUS_EXPECTED_HASH 1494609bef92599b4dd266ff859d8304)
+      set(ENERGYPLUS_EXPECTED_HASH 242854cd8ec6dd7b7a9704ff02e2d2a6)
       set(ENERGYPLUS_PLATFORM "Darwin-macOS12.1-arm64")
     else()
-      set(ENERGYPLUS_EXPECTED_HASH 4dafda1a64ac9160f38c7750daceec4b)
+      set(ENERGYPLUS_EXPECTED_HASH 42e403645c893367b252ef6cc5ec1e43)
       set(ENERGYPLUS_PLATFORM "Darwin-macOS10.15-x86_64")
     endif()
   elseif(LSB_RELEASE_ID_SHORT MATCHES "CentOS")
     # TODO: There aren't any redhat releases anymore, see PR #3145 too
-    set(ENERGYPLUS_EXPECTED_HASH b331823d01fd06f691df7ab084ba21f6)
-    set(ENERGYPLUS_PLATFORM "Centos7-x86_64")
+    set(ENERGYPLUS_EXPECTED_HASH a05f1720c4767c70e6f0065aedb725f5)
+    set(ENERGYPLUS_PLATFORM "Linux-CentOS7.9.2009-x86_64")
   else()
-    if(LSB_RELEASE_VERSION_SHORT MATCHES "20.04")
-      set(ENERGYPLUS_EXPECTED_HASH fe5a4b8dd60fec342b7ed1f9216b7061)
+    if(LSB_RELEASE_VERSION_SHORT MATCHES "22.04")
+      if (ARCH MATCHES "arm64")
+        set(ENERGYPLUS_EXPECTED_HASH 47afdcb4c8e80fa83f2c52e09c531936)
+      else()
+        set(ENERGYPLUS_EXPECTED_HASH c16f27e867e5dbfda51cc951dea0e45b)
+      endif()
+    elseif(LSB_RELEASE_VERSION_SHORT MATCHES "20.04")
+      set(ENERGYPLUS_EXPECTED_HASH f563cc9f90de8316881f1fa25dfe039f)
     else() # 18.04
-      set(ENERGYPLUS_EXPECTED_HASH fec576b594e24c11f3f83c6c3bb1e897)
+      set(ENERGYPLUS_EXPECTED_HASH d4ca4290023ccb9fcd566baf81804a6e)
     endif()
-    set(ENERGYPLUS_PLATFORM "Linux${ENERGYPLUS_SYSTEM_VERSION}-x86_64")
+    set(ENERGYPLUS_PLATFORM "Linux${ENERGYPLUS_SYSTEM_VERSION}-${ARCH}")
   endif()
   set(ENERGYPLUS_PATH "EnergyPlus-${ENERGYPLUS_VERSION}-${ENERGYPLUS_BUILD_SHA}-${ENERGYPLUS_PLATFORM}")
   if(EXISTS "${PROJECT_BINARY_DIR}/${ENERGYPLUS_PATH}.tar.gz")
@@ -651,11 +669,11 @@ elseif(WIN32)
   if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64 bit
     set(ENERGYPLUS_PATH "EnergyPlus-${ENERGYPLUS_VERSION}-${ENERGYPLUS_BUILD_SHA}-Windows-x86_64")
     set(ENERGYPLUS_ARCH 64)
-    set(ENERGYPLUS_EXPECTED_HASH 0a6a1100cf7bce4a8dd93a1ec4c8a2bb)
+    set(ENERGYPLUS_EXPECTED_HASH 16cde72821659a871eabe2c4bb1e46bb)
   else()
     set(ENERGYPLUS_PATH "EnergyPlus-${ENERGYPLUS_VERSION}-${ENERGYPLUS_BUILD_SHA}-Windows-i386")
     set(ENERGYPLUS_ARCH 32)
-    set(ENERGYPLUS_EXPECTED_HASH 0baa693ae4bca138933331632ebaf5e5)
+    set(ENERGYPLUS_EXPECTED_HASH 0b4c408a912a18c752178b15b247ff22)
   endif()
   if(EXISTS "${PROJECT_BINARY_DIR}/${ENERGYPLUS_PATH}.zip")
     file(MD5 "${PROJECT_BINARY_DIR}/${ENERGYPLUS_PATH}.zip" ENERGYPLUS_HASH)
@@ -809,20 +827,20 @@ if(BUILD_CLI)
          set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20221103-darwin_arm64.tar.gz")
          set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "7e9e1cfeb27013addc02ebb6a63325ff")
        else()
-         set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20221103-darwin.tar.gz")
-         set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "5e5727e20ca2889e70fef2e82d2e3936")
+         set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20230317-darwin.tar.gz")
+         set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "49d1d11381208ebce9cddaf8a6368400")
        endif()
      else()
-       set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20221103-linux.tar.gz")
-       set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "b1824407a2258d7c48fec29426d82ef2")
+       set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20230320-linux.tar.gz")
+       set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "057f2393cd51807105fe68eafeb31853")
        if (USE_OPENSTUDIO_GEMS_PR)
          set(OPENSTUDIO_GEMS_BASEURL "${OPENSTUDIO_GEMS_BASEURL}/openstudio-gems-linux/${OPENSTUDIO_GEMS_PR_NUMBER}")
        endif()
      endif()
   elseif(WIN32)
     # OpenStudio gems are only supported on 64 bit windows
-    set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20221103-windows.tar.gz")
-    set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "3395f80dddd5fd6e31fd7264e916e0a0")
+    set(OPENSTUDIO_GEMS_ZIP_FILENAME "openstudio3-gems-20230317-windows.tar.gz")
+    set(OPENSTUDIO_GEMS_ZIP_EXPECTED_MD5 "42cae93eae9058a5afc8ef79bfdbb2f1")
     if (USE_OPENSTUDIO_GEMS_PR)
       set(OPENSTUDIO_GEMS_BASEURL "${OPENSTUDIO_GEMS_BASEURL}/openstudio-gems-windows/${OPENSTUDIO_GEMS_PR_NUMBER}")
     endif()
@@ -1212,7 +1230,7 @@ if(APPLE)
   set(CPACK_IFW_TARGET_DIRECTORY /Applications/OpenStudio-${OpenStudio_VERSION}/)
 elseif(UNIX)
   # Default method doesn't use IFW but Deb, so this one is probably useless (but harmless)
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${OPENSTUDIO_LONG_VERSION}-${LSB_RELEASE_ID_SHORT}-${LSB_RELEASE_VERSION_SHORT}")
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${OPENSTUDIO_LONG_VERSION}-${LSB_RELEASE_ID_SHORT}-${LSB_RELEASE_VERSION_SHORT}-${ARCH}")
   set(CPACK_IFW_TARGET_DIRECTORY /usr/local/openstudio-${OpenStudio_VERSION}/)
   # These two will set the .deb install path correctly
   set(CPACK_SET_DESTDIR ON)
