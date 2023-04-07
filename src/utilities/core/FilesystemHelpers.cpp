@@ -174,7 +174,7 @@ namespace filesystem {
       filename += openstudio::toPath("-" + std::to_string(std::time(nullptr)) + "-" + std::to_string(count++));
       auto full_pathname = temp_dir / filename;
       // full_path_name = {temp_path}/{base_name}-{count++}
-
+      attempts += 1;
       try {
         if (openstudio::filesystem::create_directories(full_pathname)) {
           // if the path was created, then we know it was created for us
